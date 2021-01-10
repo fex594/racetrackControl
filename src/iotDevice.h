@@ -12,7 +12,7 @@
 #define REIFEN_LENKEN_AUSSEN_STARK 3
 #define REIFEN_LENKEN_INNEN_LEICHT 1
 #define REIFEN_LENKEN_INNEN_STARK 2
-#define REIFEN_LENKEN_IDLE 4
+#define REIFEN_LENKEN_IDLE 6
 
 #define REIFEN_TEMP_MIN 70
 #define REIFEN_TEMP_MAX 120 
@@ -92,4 +92,5 @@ typedef struct __generalStats{
     float tankFilling;
     float g_force;
     int rundenzeit;
+    int lap;
 } generalStats;

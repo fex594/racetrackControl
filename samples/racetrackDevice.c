@@ -62,6 +62,7 @@ void deviceInit(){
     stats.tire4.tireTemperatur = REIFEN_TEMP_MIN;
 
     stats.rundenzeit = 0;
+    stats.lap = 0;
     lastRoundstamp = (unsigned long)time(NULL);
 
     srand(time(NULL));
@@ -123,6 +124,7 @@ void processNextTrackpart(){
     if(currentTrackpart >= trackLength){
         checkpoint = 0;
         currentTrackpart = 0;
+        stats.lap++;
         currentBeschleunigung = &gesamtBeschleunigung[0];
         currentKurve = &gesamtKurve[0];
 
@@ -270,10 +272,11 @@ int sendJSON(){
     //printf("Publishing the event stat with rc ");
 
     char message[600];
-    sprintf(message, "{\"data\":{\"tire1\":{\"brake\":%i,\"temp\":%i},\"tire2\":{\"brake\":%i,\"temp\":%i},\"tire3\":{\"brake\":%i,\"temp\":%i},\"tire4\":{\"brake\":%i,\"temp\":%i},\"motortemp\":%i,\"speed\":%i,\"acceleration\":%i,\"tankfilling\":%f,\"g_force\":%f,\"checkpoint\":%i,\"timestamp\":%i}}",
+    sprintf(message, "{\"data\":{\"tire1\":{\"brake\":%i,\"temp\":%i},\"tire2\":{\"brake\":%i,\"temp\":%i},\"tire3\":{\"brake\":%i,\"temp\":%i},\"tire4\":{\"brake\":%i,\"temp\":%i},\"motortemp\":%i,\"speed\":%i,\"acceleration\":%i,\"tankfilling\":%f,\"g_force\":%f,\"checkpoint\":%i,\"timestamp\":%i,\"lap\":%i}}",
     randomStats.tire1.brakeTemperatur, randomStats.tire1.tireTemperatur, randomStats.tire2.brakeTemperatur, randomStats.tire2.tireTemperatur,
     randomStats.tire3.brakeTemperatur, randomStats.tire3.tireTemperatur, randomStats.tire4.brakeTemperatur, randomStats.tire4.tireTemperatur,
-    randomStats.motorTemp, randomStats.speed, randomStats.acceleration, randomStats.tankFilling, randomStats.g_force, checkpoint, stats.rundenzeit);
+    randomStats.motorTemp, randomStats.speed, randomStats.acceleration, randomStats.tankFilling, randomStats.g_force, checkpoint, 
+    stats.rundenzeit, stats.lap);
 	success= publishEvent(&client, "status","json", message, QOS0);
 	printf("Data send code: %d\n", success);
     printf("%s\n",message);
