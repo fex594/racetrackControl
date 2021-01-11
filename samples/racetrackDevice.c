@@ -20,7 +20,7 @@
 #include "iotDevice.h"
 #include <stdlib.h>
 #include <time.h>
-#include "cJSON.h"
+#include "/home/iot/iot-embeddedc/src/myJSON.h"
 
 void deviceInit(void);
 int getRandomAround(int base, int radius);
@@ -36,10 +36,10 @@ void processRandom(void);
 generalStats stats;
 generalStats randomStats;
 iotfclient  client;
-static int gesamtBeschleunigung[] = {0,1,2,2,2,2,1,1,0,0,0,0,-1,-2,-2,-2,-2,-1,-1,0,0,1,1,1,1,1,1,2,2,-2,-1,0};
+static int gesamtBeschleunigung[] = {2,2,2,2,2,1,0,-2,-2,-1,0,0,1,0,1,1,-1,-2,-2,0,-1,-1,1,2,2,0,-2,-1,0,1,2,2,-2,-1,0,1,1,0,-1,-1,0,2,2,2,1,1,0,0,1,1,1,0,-1,-2,2,0,0,1,1,2,2,-1,-1,-2,0,0,0,1,2,2};
 // static int gesamtBeschleunigung[] = {0,1,2,2,2,2,1,1};
 int *currentBeschleunigung;
-static int gesamtKurve[] = {0,1,2,2,2,2,1,1,0,0,0,0,-1,-2,-2,-2,-2,-1,-1,0,0,1,1,1,1,1,1,2,2,-2,-1,0};
+static int gesamtKurve[] = {0,0,0,0,0,0,0,1,2,2,0,1,-1,-1,-1,0,0,0,-2,-2,-2,-1,1,2,0,0,0,1,0,1,2,2,0,0,-1,-2,0,0,0,1,1,2,1,0,0,0,0,0,1,0,0,0,0,0,0,-2,-2,1,2,2,0,0,0,1,1,2,1,1,0,0};
 // static int gesamtKurve[] = {0,1,2,2,2,2,1,1,0};
 int *currentKurve;
 int trackLength;
@@ -138,9 +138,9 @@ void processNextTrackpart(){
         currentBeschleunigung++;
         currentTrackpart++;
 
-        if((currentTrackpart % 5) == 0){
-            checkpoint++;
-        }
+        // if((currentTrackpart % 5) == 0){
+        //     checkpoint++;
+        // }
     }
     
 }
@@ -276,7 +276,7 @@ int sendJSON(){
     sprintf(message, "{\"data\":{\"tire1\":{\"brake\":%i,\"temp\":%i},\"tire2\":{\"brake\":%i,\"temp\":%i},\"tire3\":{\"brake\":%i,\"temp\":%i},\"tire4\":{\"brake\":%i,\"temp\":%i},\"motortemp\":%i,\"speed\":%i,\"acceleration\":%i,\"tankfilling\":%f,\"g_force\":%f,\"checkpoint\":%i,\"timestamp\":%i,\"lap\":%i}}",
     randomStats.tire1.brakeTemperatur, randomStats.tire1.tireTemperatur, randomStats.tire2.brakeTemperatur, randomStats.tire2.tireTemperatur,
     randomStats.tire3.brakeTemperatur, randomStats.tire3.tireTemperatur, randomStats.tire4.brakeTemperatur, randomStats.tire4.tireTemperatur,
-    randomStats.motorTemp, randomStats.speed, randomStats.acceleration, randomStats.tankFilling, randomStats.g_force, checkpoint, 
+    randomStats.motorTemp, randomStats.speed, randomStats.acceleration, randomStats.tankFilling, randomStats.g_force, currentTrackpart, 
     stats.rundenzeit, stats.lap);
 	success= publishEvent(&client, "status","json", message, QOS0);
 	//printf("Data send code: %d\n", success);
@@ -288,7 +288,8 @@ int sendJSON(){
 
 void myCallback (char* commandName, char* format, void* payload)
 {
-    // cJSON *json = cJSON_Parse((char *)payload);
+    // cJSON *json = NULL;
+    // json = cJSON_Parse((char *)payload);
     // cJSON *tile = NULL;
     // cJSON *status = NULL;
     // char *tileString = NULL;
@@ -307,6 +308,7 @@ void myCallback (char* commandName, char* format, void* payload)
 	//     printf("Vorsicht bei %s, Statusinfo: %s\n", tileString, statusString);
 	//     printf("------------------------------------\n" );
     // }
+    //convert(payload);
 	printf("------------------------------------\n" );
 	printf("Warnung : %s\n", (char *)payload);
 	printf("------------------------------------\n" );
