@@ -20,6 +20,7 @@
 #include "iotDevice.h"
 #include <stdlib.h>
 #include <time.h>
+#include "cJSON.h"
 
 void deviceInit(void);
 int getRandomAround(int base, int radius);
@@ -278,8 +279,8 @@ int sendJSON(){
     randomStats.motorTemp, randomStats.speed, randomStats.acceleration, randomStats.tankFilling, randomStats.g_force, checkpoint, 
     stats.rundenzeit, stats.lap);
 	success= publishEvent(&client, "status","json", message, QOS0);
-	printf("Data send code: %d\n", success);
-    printf("%s\n",message);
+	//printf("Data send code: %d\n", success);
+    //printf("%s\n",message);
 	yield(&client,1000);
 	
     return success;
@@ -287,11 +288,27 @@ int sendJSON(){
 
 void myCallback (char* commandName, char* format, void* payload)
 {
+    // cJSON *json = cJSON_Parse((char *)payload);
+    // cJSON *tile = NULL;
+    // cJSON *status = NULL;
+    // char *tileString = NULL;
+    // char *statusString = NULL;
+    // if(json != NULL)
+    // {
+    //     tile = cJSON_GetObjectItemCaseSensitive(json, "tile");
+    //     if(cJSON_IsString(tile) && (tile->valuestring != NULL)){
+    //         tileString = tile->valuestring;
+    //     }
+    //     status = cJSON_GetObjectItemCaseSensitive(json, "status");
+    //     if(cJSON_IsString(status) && (status->valuestring != NULL)){
+    //         statusString = status->valuestring;
+    //     }
+    //     printf("------------------------------------\n" );
+	//     printf("Vorsicht bei %s, Statusinfo: %s\n", tileString, statusString);
+	//     printf("------------------------------------\n" );
+    // }
 	printf("------------------------------------\n" );
-	printf("The command received :: %s\n", commandName);
-	printf("format : %s\n", format);
-	printf("Payload is : %s\n", (char *)payload);
-
+	printf("Warnung : %s\n", (char *)payload);
 	printf("------------------------------------\n" );
 }
 
