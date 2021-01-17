@@ -20,7 +20,7 @@
 
 #define BREMSE_LEICHT 100
 #define BREMSE_STARK 200
-#define BREMSE_ERHOLEN 60
+#define BREMSE_ERHOLEN 90
 
 #define BREMSE_TEMP_MIN 300
 #define BREMSE_TEMP_MAX 1200
@@ -94,3 +94,21 @@ typedef struct __generalStats{
     int rundenzeit;
     int lap;
 } generalStats;
+
+typedef union __failcondition{
+    struct{
+        uint8_t tire1Brake:1;
+        uint8_t tire1Tire:1;
+        uint8_t tire2Brake:1;
+        uint8_t tire2Tire:1;
+        uint8_t tire3Brake:1;
+        uint8_t tire3Tire:1;
+        uint8_t tire4Brake:1;
+        uint8_t tire4Tire:1;
+        uint8_t motor:1;
+        uint8_t errorsize:7;
+    }errorbits;
+
+    uint8_t ui8_data[2];
+    uint16_t ui16_data;
+}failStates;

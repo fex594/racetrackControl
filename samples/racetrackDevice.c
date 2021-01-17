@@ -31,6 +31,7 @@ int minMax(int value, int min, int max);
 void processTrackpart(void);
 float minMaxFloat(float value, float min, float max);
 void processRandom(void);
+void processError(void);
 
 
 generalStats stats;
@@ -41,6 +42,7 @@ static int gesamtBeschleunigung[] = {2,2,2,2,2,1,0,-2,-2,-1,0,0,1,0,1,1,-1,-2,-2
 int *currentBeschleunigung;
 static int gesamtKurve[] = {0,0,0,0,0,0,0,1,2,2,0,1,-1,-1,-1,0,0,0,-2,-2,-2,-1,1,2,0,0,0,1,0,1,2,2,0,0,-1,-2,0,0,0,1,1,2,1,0,0,0,0,0,1,0,0,0,0,0,0,-2,-2,1,2,2,0,0,0,1,1,2,1,1,0,0};
 // static int gesamtKurve[] = {0,1,2,2,2,2,1,1,0};
+failStates failures;
 int *currentKurve;
 int trackLength;
 int currentTrackpart = 0;
@@ -71,6 +73,9 @@ void deviceInit(){
     printf("Tracklänge: %i",trackLength);
     currentBeschleunigung = &gesamtBeschleunigung[0];
     currentKurve = &gesamtKurve[0];
+
+    failures.ui16_data = 0x0000;
+    failures.errorbits.errorsize = 9;
 }
 int getRandomAround(int base, int radius){
     return base + ((rand() % (2 * radius))- radius);
@@ -109,6 +114,42 @@ float minMaxFloat(float value, float min, float max){
         return min;
     }else{
         return value;
+    }
+}
+
+void processError(){
+
+    if((rand() % 100) <= 5){
+        uint16_t offset = (rand() % failures.errorbits.errorsize);
+        failures.ui16_data |= 1 << offset;
+    }
+    
+    if(failures.errorbits.tire1Brake){
+        randomStats.tire1.brakeTemperatur *= 1.25;
+    }
+    if(failures.errorbits.tire2Brake){
+        randomStats.tire2.brakeTemperatur *= 1.25;
+    }
+    if(failures.errorbits.tire3Brake){
+        randomStats.tire3.brakeTemperatur *= 1.25;
+    }
+    if(failures.errorbits.tire4Brake){
+        randomStats.tire4.brakeTemperatur *= 1.25;
+    }
+    if(failures.errorbits.tire1Tire){
+        randomStats.tire1.tireTemperatur *= 1.25;
+    }
+    if(failures.errorbits.tire2Tire){
+        randomStats.tire2.tireTemperatur *= 1.25;
+    }
+    if(failures.errorbits.tire3Tire){
+        randomStats.tire3.tireTemperatur *= 1.25;
+    }
+    if(failures.errorbits.tire4Tire){
+        randomStats.tire4.tireTemperatur *= 1.25;
+    }
+    if(failures.errorbits.motor){
+        randomStats.motorTemp *= 1.25;
     }
 }
 
@@ -366,6 +407,7 @@ int main(int argc, char const *argv[])
         processNextTrackpart();
         processTrackpart();
         processRandom();
+        processError();
         sendJSON();
 		sleep(2);
 	}
